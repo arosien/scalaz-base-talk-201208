@@ -31,8 +31,14 @@ Validation vs. Either
   accumulates errors via Semigroup append |+|
   ValidationNEL[X, A] alias for Validation[NonEmptyList[X], A]
   NonEmptyList has a Semigroup so you get error accumulation "for free"
+  multi-level case class validation
+    companion object apply() pattern
+    Validation is Applicative so you can combine multiple Validations where failures are accumulated
 
 Dependency Injection
   Reader monad, really just function composition
+
+Lenses
+  removing case class copy-cruft
 
 Writer/Logger
