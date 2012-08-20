@@ -7,6 +7,7 @@ monads: trivial sequence -> for-comprehension -> add monads, and hence semantics
 
 syntax helpers: 
 
+```scala
   val a: A
   val f: A => A
   val g: A => B
@@ -17,13 +18,18 @@ syntax helpers:
 
   val o: Option[String]
   val s: String = o | "meh" // o.getOrElse("meh")
+```
 
 covariance helpers: 
+```scala
   .none, .some
   .left, .right
+```
 
 type-safety:
+```scala
   === via Equal[A]
+```
 
 Validation vs. Either
   better names: Failure/Success vs. Left/Right
