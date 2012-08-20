@@ -1,28 +1,28 @@
 syntax helpers: 
 
 ```scala
-  val a: A
-  val f: A => A
-  val g: A => B
+val a: A
+val f: A => A
+val g: A => B
 
-  val b: B = a |> f |> g // g(f(a))
+val b: B = a |> f |> g // g(f(a))
 
-  val p: Boolean
-  val isP: String = p ? "yes" | "no" // if (p) "yes" else "no"
+val p: Boolean
+val isP: String = p ? "yes" | "no" // if (p) "yes" else "no"
 
-  val o: Option[String]
-  val s: String = o | "meh" // o.getOrElse("meh")
+val o: Option[String]
+val s: String = o | "meh" // o.getOrElse("meh")
 ```
 
 covariance helpers: 
 ```scala
-  .none, .some
-  .left, .right
+.none, .some
+.left, .right
 ```
 
 type-safety:
 ```scala
-  === via Equal[A]
+=== via Equal[A]
 ```
 
 Validation vs. Either
@@ -32,7 +32,7 @@ Validation vs. Either
  * ValidationNEL[X, A] alias for Validation[NonEmptyList[X], A]
  * NonEmptyList has a Semigroup so you get error accumulation "for free"
  * multi-level case class validation
- ** companion object apply() pattern
+   * companion object apply() pattern
  * Validation is Applicative so you can combine multiple Validations where failures are accumulated
 
 Lenses
