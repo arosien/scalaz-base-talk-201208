@@ -1,7 +1,7 @@
 composition
-  fp folks always talk about composition. what's the big deal? 
-  examples of non-composable
-  what you get "for free" with composable
+ * fp folks always talk about composition. what's the big deal? 
+ * examples of non-composable
+ * what you get "for free" with composable
 
 monads: trivial sequence -> for-comprehension -> add monads, and hence semantics, without changing the program
 
@@ -32,19 +32,19 @@ type-safety:
 ```
 
 Validation vs. Either
-  better names: Failure/Success vs. Left/Right
-  monadic without the need for left/right projection, defaults to right
-  accumulates errors via Semigroup append |+|
-  ValidationNEL[X, A] alias for Validation[NonEmptyList[X], A]
-  NonEmptyList has a Semigroup so you get error accumulation "for free"
-  multi-level case class validation
-    companion object apply() pattern
-    Validation is Applicative so you can combine multiple Validations where failures are accumulated
+ * better names: Failure/Success vs. Left/Right
+ * monadic without the need for left/right projection, defaults to right
+ * accumulates errors via Semigroup append |+|
+ * ValidationNEL[X, A] alias for Validation[NonEmptyList[X], A]
+ * NonEmptyList has a Semigroup so you get error accumulation "for free"
+ * multi-level case class validation
+ ** companion object apply() pattern
+ * Validation is Applicative so you can combine multiple Validations where failures are accumulated
 
 Dependency Injection
-  Reader monad, really just function composition
+ * Reader monad, really just function composition
 
 Lenses
-  removing case class copy-cruft
+ * removing case class copy-cruft
 
 Writer/Logger
