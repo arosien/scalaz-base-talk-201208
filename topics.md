@@ -1,3 +1,11 @@
+_Note: this is scalaz 6._
+
+```scala
+import scalaz._
+import Scalaz._
+// profit
+```
+
 syntax helpers: 
 
 ```scala
@@ -42,7 +50,18 @@ Dependency Injection
  * Reader monad, really just function composition
  * Why this doesn't work without scalaz: no map/flatMap for Function1
 
+memoization
+```scala
+def expensive(foo: Foo): Bar = ...
+val memo = immutableHashMapMemo { foo: Foo => expensive(foo) }
+
+val f: Foo
+val b: Bar = memo(f) // expensive(f) is cached
+```
+
 Writer/Logger
+
+"thinking in types"
 
 composition
  * fp folks always talk about composition. what's the big deal? 
