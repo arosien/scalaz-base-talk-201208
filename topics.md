@@ -78,4 +78,4 @@ composition
  * what you get "for free" with composition
 
 monads: trivial sequence -> for-comprehension -> add monads, and hence semantics, without changing the program
-
+ * "a monadic function is just a pure function from input values to output computations"
