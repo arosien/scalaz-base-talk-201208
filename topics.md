@@ -33,6 +33,15 @@ type-safety:
 === via Equal[A]
 ```
 
+destructuring tai-chi with `fold`:
+ * pattern-matching allows deconstruction of a value in arbitrary ways, `fold` only in the two allowed ways
+```scala
+val mojo: Option[String] = "whiskey".some
+val grassHopper: Boolean = mojo.fold(some => true, none => false) // true
+
+// Either.fold() already defined in Scala
+```
+
 Validation vs. Either
  * better names: Failure/Success vs. Left/Right
  * monadic without the need for left/right projection, defaults to right
@@ -50,7 +59,7 @@ Dependency Injection
  * Reader monad, really just function composition
  * Why this doesn't work without scalaz: no map/flatMap for Function1
 
-memoization
+memoization:
 ```scala
 def expensive(foo: Foo): Bar = ...
 val memo = immutableHashMapMemo { foo: Foo => expensive(foo) }
@@ -70,7 +79,3 @@ composition
 
 monads: trivial sequence -> for-comprehension -> add monads, and hence semantics, without changing the program
 
-references:
- * https://github.com/debasishg/tryscalaz
- * http://scalaz.github.com/scalaz/scalaz-2.9.1-6.0.4/doc.sxr/index.html
- * http://phillyemergingtech.com/2012/system/presentations/di-without-the-gymnastics.pdf
