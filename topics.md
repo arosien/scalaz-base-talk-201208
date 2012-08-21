@@ -35,6 +35,7 @@ type-safety:
 
 destructuring tai-chi with `fold`:
  * pattern-matching allows deconstruction of a value in arbitrary ways, `fold` only in the two allowed ways
+
 ```scala
 val mojo: Option[String] = "whiskey".some
 val grassHopper: Boolean = mojo.fold(some => true, none => false) // true
