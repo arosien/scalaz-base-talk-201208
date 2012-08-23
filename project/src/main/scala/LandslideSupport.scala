@@ -9,6 +9,7 @@ object LandslideSupport {
   val settings: Seq[Setting[_]] =
     Seq(
       sourceDirectory in Landslide <<= sourceDirectory(_ / "landslide"),
+      watchSources := Seq(file("src/landslide")),
       target in Landslide <<= target(_ / "landslide"),
       includeFilter in Landslide := AllPassFilter
     ) ++ inConfig(Landslide)(Seq(
