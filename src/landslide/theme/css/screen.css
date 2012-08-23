@@ -6,6 +6,12 @@ body {
   overflow: hidden;
 }
 
+div.linenodiv {
+  color: #ccc;
+  font-weight: normal;
+  padding: 8px;
+}
+
 div.presentation {
   position: absolute;
   width: 100%;
