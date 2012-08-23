@@ -45,6 +45,60 @@ Then:
 
 .notes: This is _scalaz 6._ Also, assume this is imported in all code snippets.
 
+--- 
+
+# Memoization
+
+--- 
+
+# Memoization
+
+    !scala
+    def expensive(foo: Foo): Bar = ...
+
+    val f: Foo
+
+    expensive(f) // $$$
+    expensive(f) // $$$
+    expensive(f) // $$$
+    ...          
+
+--- 
+
+# Memoization
+
+    !scala
+    def expensive(foo: Foo): Bar = ...
+
+    val memo = immutableHashMapMemo { 
+      foo: Foo => expensive(foo) 
+    }
+
+    val f: Foo
+
+    memo(f) // $$$ (cache miss & fill)
+    memo(f) // 1¢  (cache hit)
+    memo(f) // 1¢  (cache hit)
+    ...     
+
+---
+
+# Memoization
+
+Many memoization strategies:
+
+    !scala
+    immutableHashMapMemo[K, V]
+    
+    mutableHashMapMemo[K, V]
+
+    arrayMemo[V](size: Int) // fixed size
+
+    // make your own! :/
+    memo[K, V](f: (K => V) => K => V) 
+
+.notes: Super-nerdy: the memoizing strategies are just functions of `K => V`, which means the generic `memo()` constructor has the same signature as the Y-combinator!
+
 ---
 
 # Style
@@ -268,24 +322,6 @@ Lenses _compose_:
  * Reader monad, really just function composition
  * Why this doesn't work without scalaz: no map/flatMap for Function1
 
---- 
-
-# Memoization
-
-    !scala
-    def expensive(foo: Foo): Bar = ...
-
-    // a read-through cache
-    val memo = immutableHashMapMemo { 
-      foo: Foo => expensive(foo) 
-    }
-
-    val f: Foo
-    val b: Bar = memo(f) // cache miss & fill
-
-    memo(f) // cache hit
-    memo(f) // cache hit
-    ...
 ---
 
 # Writer/Logger
