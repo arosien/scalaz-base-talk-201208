@@ -2,12 +2,12 @@
 
 <div style="border-radius: 10px; background: #EEEEEE; padding: 20px; text-align: center; font-size: 1.5em">
   Adam Rosien <br/>
-  Box <br/>
-  <code>adam@rosien.net</code> <br/>
+  <code>arosien@box.com | adam@rosien.net</code> <br/>
   <br/>
-  <code>@arosien</code><br/>
-  <code>#scalasv #scalaz</code>
+  <code>@arosien #scalasv #scalaz</code>
 </div>
+
+![](img/box.png)
 
 ---
 
@@ -20,66 +20,82 @@ This talk is *not* about:
 
 ---
 
-Note: this is _scalaz 6._ 
+    !scala
+    val talkTopics = for {
+      situation <- everyDaySituations
+      when      <- scalaz(situation)
+      how       <- when(situation)
+    } yield when |+| how
 
-Also, assume this is imported in all slide code snippets.
+---
 
     !scala
-
     import scalaz._
     import Scalaz._
 
     // profit
 
+Note: this is _scalaz 6._ 
+
+Also, assume this is imported in all code snippets.
+
 ---
 
-# Syntax Helpers
+# Style
 
     !scala
     val a: A
     val f: A => B
     val g: B => C
 
-    g(f(a))     // composition
+    g(f(a))     // composition, vs....
 
     a |> f |> g // "unix-pipey"
+
+When you want to emphasize the pipeline nature 
+of nested functions: `g(f)` to `f |> g`
+
+---
+
+# Style
+
+    !scala
+    val p: Boolean
+
+    // ternary-operator-ish
+    p ? "yes" | "no" // if (p) "yes" else "no" 
+
+    val o: Option[String]
+    
+    o | "meh"        // o.getOrElse("meh") 
+
+When you just can't stand typing `if` and `else` all the time.
+It's so... _imperative_.
+
+---
+
+# Syntax Helpers 
+
+    !scala
+    Some("foo")  // Some[String]
+    "foo".some   // Option[String]
+
+    None         // None.type
+    none         // Option[Nothing], oops!
+    none[String] // Option[String]
 
 ---
 
 # Syntax Helpers
 
     !scala
-    val p: Boolean
+    Right(42) // Right[Nothing, Int], oops!
+    Right[String, Int](42) // meh
+    42.right[String] // Either[String, Int]
 
-    if (p) "yes" else "no" // vs.
-    p ? "yes" | "no"       // "ternary-ish"
-
-
-    val o: Option[String]
-
-    o.getOrElse("meh") // vs.
-    o | "meh" 
-
----
-
-# Syntax Helpers 
-
-Sometimes you're lazy and want the compiler to infer the correct type 
-so you don't have to declare it yourself. But be careful, not all
-constructors return the "proper" type, so you may be constraining
-yourself to too-specific a type, especially if consumers have type
-parameters that are not covariant.
-
-    !scala
-    Some("foo") // Some[String], oops
-    "foo".some  // Option[String]
-
-
-    Right("foo") // Right[Nothing, String]
-    Right[Throwable, String]("foo") // meh
-    "foo".right[Throwable] 
-    // Right[Throwable, String]
-
+    Left("crap") // Left[String, Nothing], oops!
+    Left[String, Int]("crap") // meh
+    "crap".left[Int] // Either[String, Int]
 ---
 
 # Type-safe equality
@@ -132,13 +148,15 @@ parameters that are not covariant.
         Foo("root", 11),
         Seq(
           FooNode(Foo("child1", 1)),
-          FooNode(Foo("child2", 2))))
+          FooNode(Foo("child2", 2)))) // <-- * 4
 
-Task: Create a new tree where the second child's factor is multiplied by 4.
+Task: Create a new tree where the *second child's* `factor` is multiplied by 4.
 
 ---
 
 # Lenses
+
+Let's try all at once:
 
     !scala
     val secondTimes4: FooNode => FooNode = 
@@ -150,6 +168,8 @@ Task: Create a new tree where the second child's factor is multiplied by 4.
             value = second.value.copy(
               factor = second.value.factor * 4)))
       })
+
+Eww.
 
 ---
 
