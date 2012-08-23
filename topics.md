@@ -1,6 +1,22 @@
-_Note: this is scalaz 6._
+shout out to the scalaz authors!
+
+what this talk is not _specificially_ about:
+ * category theory
+ * type theory
+ * functors, monads and applicative
+
+some syntactical basics:
+```scala
+def foo(bar: Bar): Baz = ...
+
+// can also be written as
+
+val foo: Bar => Baz = ...
+```
 
 ```scala
+// Note: this is scalaz 6.
+
 import scalaz._
 import Scalaz._
 // profit
