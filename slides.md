@@ -29,15 +29,75 @@ This talk is *not* about:
 
 ---
 
+In `build.sbt`:
+
+    !scala
+    libraryDependencies += 
+      "org.scalaz" %% "scalaz" % "6.0.4"
+
+Then:
+
     !scala
     import scalaz._
     import Scalaz._
 
     // profit
 
-Note: this is _scalaz 6._ 
+.notes: This is _scalaz 6._ Also, assume this is imported in all code snippets.
 
-Also, assume this is imported in all code snippets.
+--- 
+
+# Memoization
+
+--- 
+
+# Memoization
+
+    !scala
+    def expensive(foo: Foo): Bar = ...
+
+    val f: Foo
+
+    expensive(f) // $$$
+    expensive(f) // $$$
+    expensive(f) // $$$
+    ...          
+
+--- 
+
+# Memoization
+
+    !scala
+    def expensive(foo: Foo): Bar = ...
+
+    val memo = immutableHashMapMemo { 
+      foo: Foo => expensive(foo) 
+    }
+
+    val f: Foo
+
+    memo(f) // $$$ (cache miss & fill)
+    memo(f) // 1¢  (cache hit)
+    memo(f) // 1¢  (cache hit)
+    ...     
+
+---
+
+# Memoization
+
+Many memoization strategies:
+
+    !scala
+    immutableHashMapMemo[K, V]
+    
+    mutableHashMapMemo[K, V]
+
+    arrayMemo[V](size: Int) // fixed size
+
+    // make your own! :/
+    memo[K, V](f: (K => V) => K => V) 
+
+.notes: Super-nerdy: the memoizing strategies are just functions of `K => V`, which means the generic `memo()` constructor has the same signature as the Y-combinator!
 
 ---
 
@@ -69,8 +129,7 @@ of nested functions: `g(f)` to `f |> g`
     
     o | "meh"        // o.getOrElse("meh") 
 
-When you just can't stand typing `if` and `else` all the time.
-It's so... _imperative_.
+.notes: When you just can't stand typing `if` and `else` all the time.  It's so... _imperative_.
 
 ---
 
@@ -90,12 +149,12 @@ It's so... _imperative_.
 
     !scala
     Right(42) // Right[Nothing, Int], oops!
-    Right[String, Int](42) // meh
+    Right[String, Int](42) // verbose
     42.right[String] // Either[String, Int]
 
-    Left("crap") // Left[String, Nothing], oops!
-    Left[String, Int]("crap") // meh
-    "crap".left[Int] // Either[String, Int]
+    Left("meh") // Left[String, Nothing], oops!
+    Left[String, Int]("meh") // verbose
+    "meh".left[Int] // Either[String, Int]
 ---
 
 # Type-safe equality
@@ -263,24 +322,6 @@ Lenses _compose_:
  * Reader monad, really just function composition
  * Why this doesn't work without scalaz: no map/flatMap for Function1
 
---- 
-
-# Memoization
-
-    !scala
-    def expensive(foo: Foo): Bar = ...
-
-    // a read-through cache
-    val memo = immutableHashMapMemo { 
-      foo: Foo => expensive(foo) 
-    }
-
-    val f: Foo
-    val b: Bar = memo(f) // cache miss & fill
-
-    memo(f) // cache hit
-    memo(f) // cache hit
-    ...
 ---
 
 # Writer/Logger

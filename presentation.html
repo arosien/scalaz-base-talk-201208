@@ -81,7 +81,7 @@
             </aside>
             
             <aside class="page_number">
-              1/22
+              1/25
             </aside>
 
           </footer>
@@ -118,7 +118,7 @@
             </aside>
             
             <aside class="page_number">
-              2/22
+              2/25
             </aside>
 
           </footer>
@@ -159,7 +159,7 @@
             </aside>
             
             <aside class="page_number">
-              3/22
+              3/25
             </aside>
 
           </footer>
@@ -168,11 +168,18 @@
       
       <!-- slide source: slides.md -->
       <div class="slide-wrapper">
-        <div class="slide has_code">
+        <div class="slide has_code has_notes">
           <div class="inner">
             
             
-            <section><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+            <section><p>In <code>build.sbt</code>:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">libraryDependencies</span> <span class="o">+=</span> 
+  <span class="s">&quot;org.scalaz&quot;</span> <span class="o">%%</span> <span class="s">&quot;scalaz&quot;</span> <span class="o">%</span> <span class="s">&quot;6.0.4&quot;</span>
+</pre></div>
+</td></tr></table>
+<p>Then:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">import</span> <span class="nn">scalaz._</span>
@@ -181,8 +188,7 @@
 <span class="c1">// profit</span>
 </pre></div>
 </td></tr></table>
-<p>Note: this is <em>scalaz 6.</em> </p>
-<p>Also, assume this is imported in all code snippets.</p></section>
+<p class="notes">This is <em>scalaz 6.</em> Also, assume this is imported in all code snippets.</p></section>
             
           </div>
           <div class="presenter_notes">
@@ -200,7 +206,195 @@
             </aside>
             
             <aside class="page_number">
-              4/22
+              4/25
+            </aside>
+
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide">
+          <div class="inner">
+            
+            <header><h1>Memoization</h1></header>
+            
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+
+
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              5/25
+            </aside>
+
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide has_code">
+          <div class="inner">
+            
+            <header><h1>Memoization</h1></header>
+            
+            
+            <section><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="n">expensive</span><span class="o">(</span><span class="n">foo</span><span class="k">:</span> <span class="kt">Foo</span><span class="o">)</span><span class="k">:</span> <span class="kt">Bar</span> <span class="o">=</span> <span class="o">...</span>
+
+<span class="k">val</span> <span class="n">f</span><span class="k">:</span> <span class="kt">Foo</span>
+
+<span class="n">expensive</span><span class="o">(</span><span class="n">f</span><span class="o">)</span> <span class="c1">// $$$</span>
+<span class="n">expensive</span><span class="o">(</span><span class="n">f</span><span class="o">)</span> <span class="c1">// $$$</span>
+<span class="n">expensive</span><span class="o">(</span><span class="n">f</span><span class="o">)</span> <span class="c1">// $$$</span>
+<span class="o">...</span>
+</pre></div>
+</td></tr></table></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+
+
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              6/25
+            </aside>
+
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide has_code">
+          <div class="inner">
+            
+            <header><h1>Memoization</h1></header>
+            
+            
+            <section><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="n">expensive</span><span class="o">(</span><span class="n">foo</span><span class="k">:</span> <span class="kt">Foo</span><span class="o">)</span><span class="k">:</span> <span class="kt">Bar</span> <span class="o">=</span> <span class="o">...</span>
+
+<span class="k">val</span> <span class="n">memo</span> <span class="k">=</span> <span class="n">immutableHashMapMemo</span> <span class="o">{</span> 
+  <span class="n">foo</span><span class="k">:</span> <span class="kt">Foo</span> <span class="o">=&gt;</span> <span class="n">expensive</span><span class="o">(</span><span class="n">foo</span><span class="o">)</span> 
+<span class="o">}</span>
+
+<span class="k">val</span> <span class="n">f</span><span class="k">:</span> <span class="kt">Foo</span>
+
+<span class="n">memo</span><span class="o">(</span><span class="n">f</span><span class="o">)</span> <span class="c1">// $$$ (cache miss &amp; fill)</span>
+<span class="n">memo</span><span class="o">(</span><span class="n">f</span><span class="o">)</span> <span class="c1">// 1¢  (cache hit)</span>
+<span class="n">memo</span><span class="o">(</span><span class="n">f</span><span class="o">)</span> <span class="c1">// 1¢  (cache hit)</span>
+<span class="o">...</span>
+</pre></div>
+</td></tr></table></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+
+
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              7/25
+            </aside>
+
+          </footer>
+        </div>
+      </div>
+      
+      <!-- slide source: slides.md -->
+      <div class="slide-wrapper">
+        <div class="slide has_code has_notes">
+          <div class="inner">
+            
+            <header><h1>Memoization</h1></header>
+            
+            
+            <section><p>Many memoization strategies:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">immutableHashMapMemo</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span>
+
+<span class="n">mutableHashMapMemo</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span>
+
+<span class="n">arrayMemo</span><span class="o">[</span><span class="kt">V</span><span class="o">](</span><span class="n">size</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="c1">// fixed size</span>
+
+<span class="c1">// make your own! :/</span>
+<span class="n">memo</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="o">(</span><span class="kt">K</span> <span class="o">=&gt;</span> <span class="kt">V</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">K</span> <span class="k">=&gt;</span> <span class="n">V</span><span class="o">)</span>
+</pre></div>
+</td></tr></table>
+<p class="notes">Super-nerdy: the memoizing strategies are just functions of <code>K =&gt; V</code>, which means the generic <code>memo()</code> constructor has the same signature as the Y-combinator!</p></section>
+            
+          </div>
+          <div class="presenter_notes">
+            <header><h1>Presenter Notes</h1></header>
+            <section>
+            
+            </section>
+          </div>
+
+
+          <footer>
+            
+            <aside class="source">
+              Source: <a href="slides.md">slides.md</a>
+            </aside>
+            
+            <aside class="page_number">
+              8/25
             </aside>
 
           </footer>
@@ -249,7 +443,7 @@ of nested functions: <code>g(f)</code> to <code>f |&gt; g</code></p></section>
             </aside>
             
             <aside class="page_number">
-              5/22
+              9/25
             </aside>
 
           </footer>
@@ -258,7 +452,7 @@ of nested functions: <code>g(f)</code> to <code>f |&gt; g</code></p></section>
       
       <!-- slide source: slides.md -->
       <div class="slide-wrapper">
-        <div class="slide has_code">
+        <div class="slide has_code has_notes">
           <div class="inner">
             
             <header><h1>Style</h1></header>
@@ -281,8 +475,7 @@ of nested functions: <code>g(f)</code> to <code>f |&gt; g</code></p></section>
 <span class="n">o</span> <span class="o">|</span> <span class="s">&quot;meh&quot;</span>        <span class="c1">// o.getOrElse(&quot;meh&quot;)</span>
 </pre></div>
 </td></tr></table>
-<p>When you just can't stand typing <code>if</code> and <code>else</code> all the time.
-It's so... <em>imperative</em>.</p></section>
+<p class="notes">When you just can't stand typing <code>if</code> and <code>else</code> all the time.  It's so... <em>imperative</em>.</p></section>
             
           </div>
           <div class="presenter_notes">
@@ -300,7 +493,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              6/22
+              10/25
             </aside>
 
           </footer>
@@ -345,7 +538,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              7/22
+              11/25
             </aside>
 
           </footer>
@@ -367,12 +560,12 @@ It's so... <em>imperative</em>.</p></section>
 5
 6
 7</pre></div></td><td class="code"><div class="highlight"><pre><span class="nc">Right</span><span class="o">(</span><span class="mi">42</span><span class="o">)</span> <span class="c1">// Right[Nothing, Int], oops!</span>
-<span class="nc">Right</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">](</span><span class="mi">42</span><span class="o">)</span> <span class="c1">// meh</span>
+<span class="nc">Right</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">](</span><span class="mi">42</span><span class="o">)</span> <span class="c1">// verbose</span>
 <span class="mf">42.</span><span class="n">right</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="c1">// Either[String, Int]</span>
 
-<span class="nc">Left</span><span class="o">(</span><span class="s">&quot;crap&quot;</span><span class="o">)</span> <span class="c1">// Left[String, Nothing], oops!</span>
-<span class="nc">Left</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">](</span><span class="s">&quot;crap&quot;</span><span class="o">)</span> <span class="c1">// meh</span>
-<span class="s">&quot;crap&quot;</span><span class="o">.</span><span class="n">left</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="c1">// Either[String, Int]</span>
+<span class="nc">Left</span><span class="o">(</span><span class="s">&quot;meh&quot;</span><span class="o">)</span> <span class="c1">// Left[String, Nothing], oops!</span>
+<span class="nc">Left</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">Int</span><span class="o">](</span><span class="s">&quot;meh&quot;</span><span class="o">)</span> <span class="c1">// verbose</span>
+<span class="s">&quot;meh&quot;</span><span class="o">.</span><span class="n">left</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="c1">// Either[String, Int]</span>
 </pre></div>
 </td></tr></table></section>
             
@@ -392,7 +585,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              8/22
+              12/25
             </aside>
 
           </footer>
@@ -449,7 +642,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              9/22
+              13/25
             </aside>
 
           </footer>
@@ -491,7 +684,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              10/22
+              14/25
             </aside>
 
           </footer>
@@ -534,7 +727,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              11/22
+              15/25
             </aside>
 
           </footer>
@@ -580,7 +773,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              12/22
+              16/25
             </aside>
 
           </footer>
@@ -633,7 +826,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              13/22
+              17/25
             </aside>
 
           </footer>
@@ -692,7 +885,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              14/22
+              18/25
             </aside>
 
           </footer>
@@ -755,7 +948,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              15/22
+              19/25
             </aside>
 
           </footer>
@@ -793,7 +986,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              16/22
+              20/25
             </aside>
 
           </footer>
@@ -844,7 +1037,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              17/22
+              21/25
             </aside>
 
           </footer>
@@ -905,7 +1098,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              18/22
+              22/25
             </aside>
 
           </footer>
@@ -941,66 +1134,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              19/22
-            </aside>
-
-          </footer>
-        </div>
-      </div>
-      
-      <!-- slide source: slides.md -->
-      <div class="slide-wrapper">
-        <div class="slide has_code">
-          <div class="inner">
-            
-            <header><h1>Memoization</h1></header>
-            
-            
-            <section><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="n">expensive</span><span class="o">(</span><span class="n">foo</span><span class="k">:</span> <span class="kt">Foo</span><span class="o">)</span><span class="k">:</span> <span class="kt">Bar</span> <span class="o">=</span> <span class="o">...</span>
-
-<span class="c1">// a read-through cache</span>
-<span class="k">val</span> <span class="n">memo</span> <span class="k">=</span> <span class="n">immutableHashMapMemo</span> <span class="o">{</span> 
-  <span class="n">foo</span><span class="k">:</span> <span class="kt">Foo</span> <span class="o">=&gt;</span> <span class="n">expensive</span><span class="o">(</span><span class="n">foo</span><span class="o">)</span> 
-<span class="o">}</span>
-
-<span class="k">val</span> <span class="n">f</span><span class="k">:</span> <span class="kt">Foo</span>
-<span class="k">val</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Bar</span> <span class="o">=</span> <span class="n">memo</span><span class="o">(</span><span class="n">f</span><span class="o">)</span> <span class="c1">// cache miss &amp; fill</span>
-
-<span class="n">memo</span><span class="o">(</span><span class="n">f</span><span class="o">)</span> <span class="c1">// cache hit</span>
-<span class="n">memo</span><span class="o">(</span><span class="n">f</span><span class="o">)</span> <span class="c1">// cache hit</span>
-<span class="o">...</span>
-</pre></div>
-</td></tr></table></section>
-            
-          </div>
-          <div class="presenter_notes">
-            <header><h1>Presenter Notes</h1></header>
-            <section>
-            
-            </section>
-          </div>
-
-
-          <footer>
-            
-            <aside class="source">
-              Source: <a href="slides.md">slides.md</a>
-            </aside>
-            
-            <aside class="page_number">
-              20/22
+              23/25
             </aside>
 
           </footer>
@@ -1031,7 +1165,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              21/22
+              24/25
             </aside>
 
           </footer>
@@ -1062,7 +1196,7 @@ It's so... <em>imperative</em>.</p></section>
             </aside>
             
             <aside class="page_number">
-              22/22
+              25/25
             </aside>
 
           </footer>
@@ -1102,61 +1236,61 @@ It's so... <em>imperative</em>.</p></section>
       
       
       <tr id="toc-row-5">
-        <th><a href="#slide5">Style</a></th>
+        <th><a href="#slide5">Memoization</a></th>
         <td><a href="#slide5">5</a></td>
       </tr>
       
       
       <tr id="toc-row-6">
-        <th><a href="#slide6">Style</a></th>
+        <th><a href="#slide6">Memoization</a></th>
         <td><a href="#slide6">6</a></td>
       </tr>
       
       
       <tr id="toc-row-7">
-        <th><a href="#slide7">Syntax Helpers</a></th>
+        <th><a href="#slide7">Memoization</a></th>
         <td><a href="#slide7">7</a></td>
       </tr>
       
       
       <tr id="toc-row-8">
-        <th><a href="#slide8">Syntax Helpers</a></th>
+        <th><a href="#slide8">Memoization</a></th>
         <td><a href="#slide8">8</a></td>
       </tr>
       
       
       <tr id="toc-row-9">
-        <th><a href="#slide9">Type-safe equality</a></th>
+        <th><a href="#slide9">Style</a></th>
         <td><a href="#slide9">9</a></td>
       </tr>
       
       
       <tr id="toc-row-10">
-        <th><a href="#slide10">Validation</a></th>
+        <th><a href="#slide10">Style</a></th>
         <td><a href="#slide10">10</a></td>
       </tr>
       
       
       <tr id="toc-row-11">
-        <th><a href="#slide11">Lenses</a></th>
+        <th><a href="#slide11">Syntax Helpers</a></th>
         <td><a href="#slide11">11</a></td>
       </tr>
       
       
       <tr id="toc-row-12">
-        <th><a href="#slide12">Lenses</a></th>
+        <th><a href="#slide12">Syntax Helpers</a></th>
         <td><a href="#slide12">12</a></td>
       </tr>
       
       
       <tr id="toc-row-13">
-        <th><a href="#slide13">Lenses</a></th>
+        <th><a href="#slide13">Type-safe equality</a></th>
         <td><a href="#slide13">13</a></td>
       </tr>
       
       
       <tr id="toc-row-14">
-        <th><a href="#slide14">Lenses</a></th>
+        <th><a href="#slide14">Validation</a></th>
         <td><a href="#slide14">14</a></td>
       </tr>
       
@@ -1186,26 +1320,44 @@ It's so... <em>imperative</em>.</p></section>
       
       
       <tr id="toc-row-19">
-        <th><a href="#slide19">Dependency Injection</a></th>
+        <th><a href="#slide19">Lenses</a></th>
         <td><a href="#slide19">19</a></td>
       </tr>
       
       
       <tr id="toc-row-20">
-        <th><a href="#slide20">Memoization</a></th>
+        <th><a href="#slide20">Lenses</a></th>
         <td><a href="#slide20">20</a></td>
       </tr>
       
       
       <tr id="toc-row-21">
-        <th><a href="#slide21">Writer/Logger</a></th>
+        <th><a href="#slide21">Lenses</a></th>
         <td><a href="#slide21">21</a></td>
       </tr>
       
       
       <tr id="toc-row-22">
-        <th><a href="#slide22">Thanks</a></th>
+        <th><a href="#slide22">Lenses</a></th>
         <td><a href="#slide22">22</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-23">
+        <th><a href="#slide23">Dependency Injection</a></th>
+        <td><a href="#slide23">23</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-24">
+        <th><a href="#slide24">Writer/Logger</a></th>
+        <td><a href="#slide24">24</a></td>
+      </tr>
+      
+      
+      <tr id="toc-row-25">
+        <th><a href="#slide25">Thanks</a></th>
+        <td><a href="#slide25">25</a></td>
       </tr>
       
       
