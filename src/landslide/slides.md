@@ -29,15 +29,21 @@ This talk is *not* about:
 
 ---
 
+In `build.sbt`:
+
+    !scala
+    libraryDependencies += 
+      "org.scalaz" %% "scalaz" % "6.0.4"
+
+Then:
+
     !scala
     import scalaz._
     import Scalaz._
 
     // profit
 
-Note: this is _scalaz 6._ 
-
-Also, assume this is imported in all code snippets.
+.notes: This is _scalaz 6._ Also, assume this is imported in all code snippets.
 
 ---
 
@@ -69,8 +75,7 @@ of nested functions: `g(f)` to `f |> g`
     
     o | "meh"        // o.getOrElse("meh") 
 
-When you just can't stand typing `if` and `else` all the time.
-It's so... _imperative_.
+.notes: When you just can't stand typing `if` and `else` all the time.  It's so... _imperative_.
 
 ---
 
@@ -90,12 +95,12 @@ It's so... _imperative_.
 
     !scala
     Right(42) // Right[Nothing, Int], oops!
-    Right[String, Int](42) // meh
+    Right[String, Int](42) // verbose
     42.right[String] // Either[String, Int]
 
-    Left("crap") // Left[String, Nothing], oops!
-    Left[String, Int]("crap") // meh
-    "crap".left[Int] // Either[String, Int]
+    Left("meh") // Left[String, Nothing], oops!
+    Left[String, Int]("meh") // verbose
+    "meh".left[Int] // Either[String, Int]
 ---
 
 # Type-safe equality
