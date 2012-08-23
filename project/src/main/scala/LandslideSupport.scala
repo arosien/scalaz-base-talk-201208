@@ -22,7 +22,7 @@ object LandslideRunner {
     if(!output.exists) output.mkdirs()
     IO.copyDirectory(input, output) 
 
-    Process("landslide --relative --linenos=table %s".format(input.getAbsolutePath), output).!
+    Process("landslide -r -l table slides.md", output).!
     
     // return what to copy to target/site: everything except slides.md
     output ** includeFilter --- output --- (input / "slides.md") x relativeTo(output)
