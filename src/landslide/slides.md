@@ -176,6 +176,25 @@ Eww.
 # Lenses
 
     !scala
+    Lens[Thing, View](
+      get: Thing => View,
+      set: (Thing, View) => Thing)
+
+    val thing: Thing
+    val lens:  Lens[Thing, View] = ...
+    
+    val view: View = lens(thing) // apply = get
+
+    // "set" a transformed View
+    val thing2: Thing = lens.mod(thing, v: View => ...)
+
+    // Lots of other operations on a Lens...
+
+---
+
+# Lenses
+
+    !scala
     val second: Lens[FooNode, FooNode] = 
       Lens(
         _.children(1),
@@ -191,7 +210,6 @@ Eww.
       Lens(
         _.factor, 
         (foo, fac) => foo.copy(factor = fac))
-
 ---
 
 # Lenses
