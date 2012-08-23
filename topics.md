@@ -10,10 +10,10 @@ syntax helpers:
 
 ```scala
 val a: A
-val f: A => A
-val g: A => B
+val f: A => B
+val g: B => C
 
-val b: B = a |> f |> g // g(f(a))
+val c: C = a |> f |> g // g(f(a))
 
 val p: Boolean
 val isP: String = p ? "yes" | "no" // if (p) "yes" else "no"
@@ -72,6 +72,7 @@ val b: Bar = memo(f) // expensive(f) is cached
 Writer/Logger
 
 "thinking in types"
+ * _screenshot of eclipse type inference_
 
 composition
  * fp folks always talk about composition. what's the big deal? 
