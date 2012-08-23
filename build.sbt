@@ -10,4 +10,6 @@ LandslideSupport.settings ++ Seq(site.addMappingsToSiteDir(mappings in Landslide
 
 ghpages.settings
 
-git.remoteRepo := "git@github.com:arosien/scalaz-base-talk.git"
+git.remoteRepo := "git@github.com:arosien/scalaz-base-talk-201208.git"
+
+ghpages.repository <<= (name,organization) apply ((n,o) => file("."))
