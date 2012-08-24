@@ -18,6 +18,8 @@ This talk is *not* about:
  * Category theory
  * Other really cool stuff
 
+![](img/wonka-npe.jpeg)
+
 ---
 
     !scala
@@ -172,6 +174,81 @@ of nested functions: `g(f)` to `f |> g`
 
     scala> "foo" === "bar"
     res18: Boolean = false
+
+---
+
+# Validation
+
+---
+
+# Validation
+
+The Java way, eww:
+
+    !scala
+    def fetch(uri: URI): String
+
+    def meh(t: Throwable) = ...
+    def gotIt(s: String)  = ...
+
+    try {
+      val result = fetch(...)
+      gotIt(result)
+    } catch {
+      case e: meh(e)
+    }
+
+---
+
+# Validation
+
+In Scala we represent the two cases in one type, `Either`:
+
+    !scala
+    def fetch(uri: URI): Either[Throwable, String]
+
+    def meh(t: Throwable) = ...
+    def gotIt(s: String)  = ...
+
+    val result = fetch(...) 
+
+---
+
+# Validation
+
+And handle it in multiple ways. Via pattern match:
+
+    !scala
+    result match {
+      case Left(l)  => 
+        // Left is a fail, right?
+        meh(l)
+      case Right(r) => 
+        // Right must be right?
+        gotIt(r)
+    }
+
+---
+
+# Validation
+
+Via `fold()`:
+
+    !scala
+    result.fold(
+      l => meh(l),
+      r => gotIt(r))
+
+---
+
+# Validation
+
+Via for-comprehension:
+
+    !scala
+    for {
+      
+    }
 
 ---
 
