@@ -1,25 +1,24 @@
-shout out to the scalaz authors!
+Shout out to the scalaz authors!
 
-General topics:
+Specific types for every-day problems:
+ * just better: `Validation` vs. `Either` for "exception" handling
+ * memoization: `Memo`
+ * dependency injection: `Reader` (really just function composition; why this doesn't work without scalaz: no map/flatMap for Function1)
+ * "deep" pointers and "updates": `Lens` (removing case class copy-cruft)
+ * decouple logging for flexibility: `Logger` aka `Writer`
 
+General stuff:
  * syntax helpers
  * covariance helpers
  * type-safety
 
-Bigger:
-
- * Validation vs. Either: lots better
- * Lenses: removing case class copy-cruft; "deep" pointers and "updates"
- * memoization
- * Writer/Logger
- * Dependency Injection: Reader monad, really just function composition; why this doesn't work without scalaz: no map/flatMap for Function1
-
-"thinking in types"
+Meta: "thinking in types"
  * _screenshot of eclipse type inference_
  * _one-to-one principle_: one type used per function signature
  * Rather than thinking about how to jam our ideas into the trappings of the language--class hierarchies and such--we "merely" work with the things as types, transforming them with commonly known functions like `map`, `fold`, and so on, then adding context and effects to them in a few well-known ways (dependency-injection = `Reader`, accumulate logging information = `Writer`/`Logger`, perform a transformation using the current state and produce a new state = `State`, etc.).
+ * tension between not explicitly typing, because the compiler can properly infer, and being able to inspect the type, via the editor via the compiler
 
-composition
+Meta: composition
  * fp folks always talk about composition. what's the big deal? 
  * examples of non-composable
  * what you get "for free" with composition
