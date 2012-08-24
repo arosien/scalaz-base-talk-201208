@@ -188,10 +188,10 @@ Type-safe equality!
 .notes: This has nothing to do with scalaz.
 
     !scala
-    trait Train { ... }
-    trait Plane { ... }
-    trait Automobile { ... }
-    trait Itinerary  { ... }
+    trait Train
+    trait Plane
+    trait Automobile
+    trait Itinerary
 
     def travel(
       trainId: Long, 
