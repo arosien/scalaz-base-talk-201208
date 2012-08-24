@@ -1,5 +1,5 @@
-scalaz: The Simplest Parts _(tentative title)_
-BASE Sep 2012 (?)
+scalaz "For the Rest of Us"
+Bay Area Scala Enthusiasts (BASE) Aug 2012 
 
 This talk provides an introduction to the amazing scalaz library *not* through a brain-exploding introduction to category theory or monad laws, but via its simplest practical parts for a functional programming novice. You'll learn: how to use scalaz to make your code simpler, more readable and more testable; how scalaz "makes up for" some missing parts of Scala itself; how scalaz helps make your code more type-safe; and an introduction to how scalaz encapsulates common patterns like dependency-injection and data validation. A scalaz "cheat sheet" will be provided to all attendees.
 
