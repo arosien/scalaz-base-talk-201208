@@ -7,7 +7,7 @@
   <code>@arosien #scalasv #scalaz</code>
 </div>
 
-![](img/box.png)
+![Box](img/box.png)
 
 ---
 
@@ -16,20 +16,19 @@ This talk is *not* about:
  * Monads
  * Applicative Functors
  * Category theory
- * Other really cool stuff
+ * Other really cool stuff you should learn about (eventually)
 
 ---
 
-.notes: This is probably not the best way to describe the purpose of the talk.
+This talk *is* about every-day situations where `scalaz` can:
 
-    !scala
-    val talkTopics = for {
-      situation <- everyDaySituations
-      when      <- scalaz(situation)
-      how       <- when(situation)
-    } yield when |+| how
+ * Reduce syntactical noise
+ * Add type-safety with minimal "extra work"
+ * Provide useful types that solve many classes of problems
 
 ---
+
+# Getting Started 
 
 In `build.sbt`:
 
@@ -69,9 +68,40 @@ Then:
 
 # Memoization
 
+Typically you might use a `mutable.Map` to cache results:
+
+    !scala
+    val cache = collection.mutable.Map[Foo, Bar]()
+
+    cache.getOrElseUpdate(f, expensive(f))
+
+.notes: Downsides: the cache is not the same type as the function: `Foo => Bar` vs. `Map[Foo, Bar]`. (This is not a practical problem as `Map[Foo, Bar]` has an `apply()` method which means it can be treated as a `Function1[Foo, Bar]`, i.e., `Foo => Bar`.
+
+--- 
+
+# Memoization
+
+You can try to make it look like a regular function, avoiding the `getOrElseUpdate()` call:
+
+    !scala
+    val cache = collection.mutable.Map[Foo, Bar]()
+      .withDefault(expensive _)
+
+    cache(f) // $$$ (miss & NO fill)
+    cache(f) // $$$ (miss & NO fill)
+
+But it doesn't actually cache.
+
+--- 
+
+# Memoization
+
+In `scalaz`:
+
     !scala
     def expensive(foo: Foo): Bar = ...
 
+    // Memo[Foo, Bar]
     val memo = immutableHashMapMemo { 
       foo: Foo => expensive(foo) 
     }
@@ -80,8 +110,6 @@ Then:
 
     memo(f) // $$$ (cache miss & fill)
     memo(f) // 1¢  (cache hit)
-    memo(f) // 1¢  (cache hit)
-    ...     
 
 ---
 
@@ -94,10 +122,11 @@ Many memoization strategies:
     
     mutableHashMapMemo[K, V]
 
-    arrayMemo[V](size: Int) // fixed size
+    // remove + gc unreferenced entries
+    weakHashMapMemo[K, V]   
 
-    // make your own! :/
-    memo[K, V](f: (K => V) => K => V) 
+    // fixed size, K = Int
+    arrayMemo[V](size: Int) 
 
 .notes: Super-nerdy: the memoizing strategies are just functions of `K => V`, which means the generic `memo()` constructor has the same signature as the Y-combinator!
 
@@ -105,17 +134,20 @@ Many memoization strategies:
 
 # Style
 
+Remove the need for temporary variables:
+
     !scala
-    val a: A
     val f: A => B
     val g: B => C
 
-    g(f(a))     // composition, vs....
+    val a: A = ...
+    val b = f(a)
+    val c = g(b)
 
-    a |> f |> g // "unix-pipey"
+    // or via composition, which is a bit ugly:
+    val c = g(f(a))     
 
-When you want to emphasize the pipeline nature 
-of nested functions: `g(f)` to `f |> g`
+    val c = a |> f |> g // "unix-pipey"!
 
 ---
 
@@ -180,76 +212,6 @@ Type-safe equality!
 
     scala> "foo" === "bar"
     res18: Boolean = false
-
----
-
-# Type-safety
-
-.notes: This has nothing to do with scalaz.
-
-    !scala
-    trait Train { ... }
-    trait Plane { ... }
-    trait Automobile { ... }
-    trait Itinerary  { ... }
-
-    def travel(
-      trainId: Long, 
-      planeId: Long,
-      automId: Long): Itinerary
-
----
-
-# Type-safety
-
-Was it...
-
-    !scala
-    travel(trainId, automId, planeId)
-
-    travel(trainId, planeId, automId)
-
-    travel(planeId, automId, trainId)
-
-...?
-
----
-
-# Type-safety
-
-What if you accidentally typed:
-
-    !scala
-    travel(trainId, automId, automId)
-
-.notes: "typed" har har har.
-
----
-
-# Type-safety
-
-    !scala
-    case class Id[+A](value: Long)
-
-    def travel(
-      trainId: Id[Train], 
-      planeId: Id[Plane],
-      automId: Id[Automobile]): Itinerary
-
-.notes: You can then add the implicit conversion `implicit def idToLong[A](id: Id[A]) = id.value` so you don't have to write `id.value` all the time.
-
----
-
-# Type-safety
-
-    !scala
-    travel(trainId, automId, planeId) // BOOM!
-
-    travel(trainId, planeId, automId) // compiles
-
-    travel(planeId, automId, trainId) // BOOM!
-
-    travel(trainId, automId, automId) // BOOM!
 
 ---
 
