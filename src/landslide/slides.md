@@ -18,6 +18,8 @@ This talk is *not* about:
  * Category theory
  * Other really cool stuff
 
+![](img/wonka-npe.jpeg)
+
 ---
 
     !scala
