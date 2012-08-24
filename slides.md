@@ -54,12 +54,18 @@ Then:
 
 # Memoization
 
+The goal: cache the result of the expensive computation.
+
     !scala
+    /*
+     * Assumption: produces the same 
+     * output for every input, i.e.,
+     * is referentially-transparent.
+     */
     def expensive(foo: Foo): Bar = ...
 
     val f: Foo
 
-    expensive(f) // $$$
     expensive(f) // $$$
     expensive(f) // $$$
     ...          
@@ -73,9 +79,10 @@ Typically you might use a `mutable.Map` to cache results:
     !scala
     val cache = collection.mutable.Map[Foo, Bar]()
 
-    cache.getOrElseUpdate(f, expensive(f))
+    cache.getOrElseUpdate(f, expensive(f)) // $$$
+    cache.getOrElseUpdate(f, expensive(f)) // 1¢
 
-.notes: Downsides: the cache is not the same type as the function: `Foo => Bar` vs. `Map[Foo, Bar]`. (This is not a practical problem as `Map[Foo, Bar]` has an `apply()` method which means it can be treated as a `Function1[Foo, Bar]`, i.e., `Foo => Bar`.
+.notes: Downsides: the cache is not the same type as the function: `Foo => Bar` vs. `Map[Foo, Bar]`. It's also not DRY.
 
 --- 
 
@@ -84,8 +91,9 @@ Typically you might use a `mutable.Map` to cache results:
 You can try to make it look like a regular function, avoiding the `getOrElseUpdate()` call:
 
     !scala
-    val cache = collection.mutable.Map[Foo, Bar]()
-      .withDefault(expensive _)
+    val cache: Foo => Bar = 
+      collection.mutable.Map[Foo, Bar]()
+        .withDefault(expensive _)
 
     cache(f) // $$$ (miss & NO fill)
     cache(f) // $$$ (miss & NO fill)
@@ -134,12 +142,17 @@ Many memoization strategies:
 
 # Style
 
+---
+
+# Style
+
 Remove the need for temporary variables:
 
     !scala
     val f: A => B
     val g: B => C
 
+    // using temps:
     val a: A = ...
     val b = f(a)
     val c = g(b)
@@ -147,11 +160,14 @@ Remove the need for temporary variables:
     // or via composition, which is a bit ugly:
     val c = g(f(a))     
 
-    val c = a |> f |> g // "unix-pipey"!
+    // "unix-pipey"!
+    val c = a |> f |> g 
 
 ---
 
 # Style
+
+When you just can't stand all that typing.  It's so... _imperative_.
 
     !scala
     val p: Boolean
@@ -163,31 +179,37 @@ Remove the need for temporary variables:
     
     o | "meh"        // o.getOrElse("meh") 
 
-.notes: When you just can't stand typing `if` and `else` all the time.  It's so... _imperative_.
-
 ---
 
-# Syntax Helpers 
+# Style
+
+More legible and more type-safe:
 
     !scala
     Some("foo")  // Some[String]
+
     "foo".some   // Option[String]
 
     None         // None.type
     none         // Option[Nothing], oops!
+
     none[String] // Option[String]
 
 ---
 
-# Syntax Helpers
+# Style
+
+More legible and more type-safe:
 
     !scala
     Right(42) // Right[Nothing, Int], oops!
     Right[String, Int](42) // verbose
+
     42.right[String] // Either[String, Int]
 
     Left("meh") // Left[String, Nothing], oops!
     Left[String, Int]("meh") // verbose
+
     "meh".left[Int] // Either[String, Int]
 ---
 
