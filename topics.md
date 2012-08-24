@@ -1,94 +1,23 @@
 shout out to the scalaz authors!
 
-what this talk is not _specificially_ about:
- * category theory
- * type theory
- * functors, monads and applicative
+General topics:
 
-some syntactical basics:
-```scala
-def foo(bar: Bar): Baz = ...
+ * syntax helpers
+ * covariance helpers
+ * type-safety
 
-// can also be written as
+Bigger:
 
-val foo: Bar => Baz = ...
-```
-
-```scala
-// Note: this is scalaz 6.
-
-import scalaz._
-import Scalaz._
-// profit
-```
-
-syntax helpers: 
-
-```scala
-val a: A
-val f: A => B
-val g: B => C
-
-val c: C = a |> f |> g // g(f(a))
-
-val p: Boolean
-val isP: String = p ? "yes" | "no" // if (p) "yes" else "no"
-
-val o: Option[String]
-val s: String = o | "meh" // o.getOrElse("meh")
-```
-
-covariance helpers: 
-```scala
-.none, .some
-.left, .right
-```
-
-type-safety:
-```scala
-=== via Equal[A]
-```
-
-destructuring tai-chi with `fold`:
- * pattern-matching allows deconstruction of a value in arbitrary ways, `fold` only in the two allowed ways
-
-```scala
-val mojo: Option[String] = "whiskey".some
-val grassHopper: Boolean = mojo.fold(some => true, none => false) // true
-
-// Either.fold() already defined in Scala
-```
-
-Validation vs. Either
- * better names: Failure/Success vs. Left/Right
- * monadic without the need for left/right projection, defaults to right
- * accumulates errors via Semigroup append |+|
- * ValidationNEL[X, A] alias for Validation[NonEmptyList[X], A]
- * NonEmptyList has a Semigroup so you get error accumulation "for free"
- * multi-level case class validation
-   * companion object apply() pattern
- * Validation is Applicative so you can combine multiple Validations where failures are accumulated
-
-Lenses
- * removing case class copy-cruft
-
-Dependency Injection
- * Reader monad, really just function composition
- * Why this doesn't work without scalaz: no map/flatMap for Function1
-
-memoization:
-```scala
-def expensive(foo: Foo): Bar = ...
-val memo = immutableHashMapMemo { foo: Foo => expensive(foo) }
-
-val f: Foo
-val b: Bar = memo(f) // expensive(f) is cached
-```
-
-Writer/Logger
+ * Validation vs. Either: lots better
+ * Lenses: removing case class copy-cruft; "deep" pointers and "updates"
+ * memoization
+ * Writer/Logger
+ * Dependency Injection: Reader monad, really just function composition; why this doesn't work without scalaz: no map/flatMap for Function1
 
 "thinking in types"
  * _screenshot of eclipse type inference_
+ * _one-to-one principle_: one type used per function signature
+ * Rather than thinking about how to jam our ideas into the trappings of the language--class hierarchies and such--we "merely" work with the things as types, transforming them with commonly known functions like `map`, `fold`, and so on, then adding context and effects to them in a few well-known ways (dependency-injection = `Reader`, accumulate logging information = `Writer`/`Logger`, perform a transformation using the current state and produce a new state = `State`, etc.).
 
 composition
  * fp folks always talk about composition. what's the big deal? 
