@@ -1,8 +1,8 @@
-# scalaz "For the Rest of Us"
-
 <div style="border-radius: 10px; background: #EEEEEE; padding: 20px; text-align: center; font-size: 1.5em">
+  <big><b>scalaz "For the Rest of Us"</b></big> </br>
+  </br>
   Adam Rosien <br/>
-  <code>arosien@box.com | adam@rosien.net</code> <br/>
+  <code>arosien@box.com && adam@rosien.net</code> <br/>
   <br/>
   <code>@arosien #scalasv #scalaz</code>
 </div>
@@ -11,12 +11,30 @@
 
 ---
 
-This talk is *not* about:
+![](img/wonka-npe.jpeg)
+
+.notes: Scala is great.
+
+---
+
+![](img/ma.jpg)
+
+.notes: `scalaz` has a (undeserved?) reputation as being, well, kind of crazy.
+
+---
+
+But `scalaz` is *AWESOME*. 
+
+---
+
+This talk is specifically *not* about:
 
  * Monads
  * Applicative Functors
  * Category theory
  * Other really cool stuff you should learn about (eventually)
+
+.notes: Thank your local `scalaz` authors: runarorama, retronum, tmorris and lots others.
 
 ---
 
@@ -26,6 +44,8 @@ This talk *is* about every-day situations where `scalaz` can:
  * Add type-safety with minimal "extra work"
  * Provide useful types that solve many classes of problems
 
+.notes: We'll talk about `scalaz` for (1) memoization, (2) domain model validation, (3) dependency injection and (4) better style.
+
 ---
 
 # Getting Started 
@@ -34,7 +54,7 @@ In `build.sbt`:
 
     !scala
     libraryDependencies += 
-      "org.scalaz" %% "scalaz" % "6.0.4"
+      "org.scalaz" %% "scalaz-core" % "6.0.4"
 
 Then:
 
@@ -54,14 +74,9 @@ Then:
 
 # Memoization
 
-The goal: cache the result of the expensive computation.
+The goal: cache the result of a expensive computation.
 
     !scala
-    /*
-     * Assumption: produces the same 
-     * output for every input, i.e.,
-     * is referentially-transparent.
-     */
     def expensive(foo: Foo): Bar = ...
 
     val f: Foo
@@ -69,6 +84,8 @@ The goal: cache the result of the expensive computation.
     expensive(f) // $$$
     expensive(f) // $$$
     ...          
+
+.notes: Assumption: `expensive` produces the same output for every input, i.e., is referentially-transparent.
 
 --- 
 
@@ -167,7 +184,7 @@ Remove the need for temporary variables:
 
 # Style
 
-When you just can't stand all that typing.  It's so... _imperative_.
+When you just can't stand all that (keyboard) typing: 
 
     !scala
     val p: Boolean
@@ -183,57 +200,34 @@ When you just can't stand all that typing.  It's so... _imperative_.
 
 # Style
 
-More legible and more type-safe:
+More legible (and more type-safe):
 
     !scala
+    // scala
     Some("foo")  // Some[String]
-
-    "foo".some   // Option[String]
-
     None         // None.type
-    none         // Option[Nothing], oops!
 
+    // scalaz
+    "foo".some   // Option[String]
+    none         // Option[Nothing], oops!
     none[String] // Option[String]
 
 ---
 
 # Style
 
-More legible and more type-safe:
+More legible (and more type-safe):
 
     !scala
-    Right(42) // Right[Nothing, Int], oops!
-    Right[String, Int](42) // verbose
-
-    42.right[String] // Either[String, Int]
-
+    // scala
+    Right(42)   // Right[Nothing, Int], oops!
     Left("meh") // Left[String, Nothing], oops!
+    Right[String, Int](42)   // verbose
     Left[String, Int]("meh") // verbose
 
-    "meh".left[Int] // Either[String, Int]
----
-
-# Type-safety
-
----
-
-# Type-safety
-
-Type-safe equality!
-
-    !scala
-    scala> "foo" == 1
-    res16: Boolean = false
-
-    scala> "foo" === 1
-    <console>:29: error: type mismatch;
-     found   : Int(1)
-     required: java.lang.String
-           "foo" === 1
-                     ^
-
-    scala> "foo" === "bar"
-    res18: Boolean = false
+    // scalaz
+    42.right[String] // Either[String, Int]
+    "meh".left[Int]  // Either[String, Int]
 
 ---
 
@@ -314,6 +308,8 @@ Via for-comprehension:
 
 # Validation
 
+TODO: JUST A LIST OF TOPICS, WILL BE DELETED
+
  * better names: Failure/Success vs. Left/Right
  * monadic without the need for left/right projection, defaults to right
  * accumulates errors via Semigroup append |+|
@@ -322,6 +318,16 @@ Via for-comprehension:
  * multi-level case class validation
    * companion object apply() pattern
  * Validation is Applicative so you can combine multiple Validations where failures are accumulated
+
+---
+
+# Lenses
+
+---
+
+# Lenses
+
+TODO: WHEN? WHY?
 
 ---
 
@@ -450,20 +456,32 @@ Lenses _compose_:
            FooNode(Foo("child1", ^)),
            FooNode(Foo("child2", 8))))
      */
-     
 
 ---
 
 # Dependency Injection
+
+TODO: these are just notes
 
  * Reader monad, really just function composition
  * Why this doesn't work without scalaz: no map/flatMap for Function1
 
 ---
 
-# Writer/Logger
+# Thanks!
 
+Credits, sources and references:
 
----
+ * [scalaz homepage](http://code.google.com/p/scalaz/), [scalaz 6.0.4 source cross-reference](http://scalaz.github.com/scalaz/scalaz-2.9.1-6.0.4/doc.sxr/index.html)
+ * [jrwest/learn_you_a_scalaz](https://github.com/jrwest/learn_you_a_scalaz)
+ * [debasishg/tryscalaz](https://github.com/debasishg/tryscalaz)
+ * Tony Morris, [Dependency Injection Without the Gymnastics](http://phillyemergingtech.com/2012/system/presentations/di-without-the-gymnastics.pdf)
 
-# Thanks
+<center>
+<big><b>scalaz "For the Rest of Us"</b></big> </br>
+  </br>
+  Adam Rosien <br/>
+  <code>arosien@box.com && adam@rosien.net</code> <br/>
+  <br/>
+  <code>@arosien #scalasv #scalaz</code>
+</center>
