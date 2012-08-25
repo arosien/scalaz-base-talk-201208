@@ -1,8 +1,8 @@
 Shout out to the scalaz authors!
 
 Specific types for every-day problems:
- * just better: `Validation` vs. `Either` for "exception" handling
  * memoization: `Memo`
+ * just better: `Validation` vs. `Either` for "exception" handling
  * dependency injection: `Reader` (really just function composition; why this doesn't work without scalaz: no map/flatMap for Function1)
  * "deep" pointers and "updates": `Lens` (removing case class copy-cruft)
  * decouple logging for flexibility: `Logger` aka `Writer`
