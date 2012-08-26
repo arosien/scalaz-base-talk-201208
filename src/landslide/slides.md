@@ -74,7 +74,7 @@ Then:
 
 # Memoization
 
-The goal: cache the result of a expensive computation.
+The goal: cache the result of an expensive computation.
 
     !scala
     def expensive(foo: Foo): Bar = ...
@@ -475,6 +475,7 @@ Credits, sources and references:
  * [scalaz homepage](http://code.google.com/p/scalaz/), [scalaz 6.0.4 source cross-reference](http://scalaz.github.com/scalaz/scalaz-2.9.1-6.0.4/doc.sxr/index.html)
  * [jrwest/learn_you_a_scalaz](https://github.com/jrwest/learn_you_a_scalaz)
  * [debasishg/tryscalaz](https://github.com/debasishg/tryscalaz)
+ * Runar Oli, [Dead-Simple Dependency Injection](http://lanyrd.com/2012/nescala/sqygc)
  * Tony Morris, [Dependency Injection Without the Gymnastics](http://phillyemergingtech.com/2012/system/presentations/di-without-the-gymnastics.pdf)
 
 <center>
