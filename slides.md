@@ -11,38 +11,23 @@
 
 ---
 
-![](img/wonka-npe.jpeg)
-
-.notes: Scala is great.
-
----
-
 ![](img/ma.jpg)
 
-.notes: `scalaz` has a (undeserved?) reputation as being, well, kind of crazy.
+`scalaz` has a (undeserved?) reputation as being, well, kind of crazy.
 
----
+So this talk is specifically *not* about:
 
-But `scalaz` is *AWESOME*. 
-
----
-
-This talk is specifically *not* about:
-
- * Monads
- * Applicative Functors
+ * Functors, Monads, or Applicative Functors
  * Category theory
  * Other really cool stuff you should learn about (eventually)
 
-.notes: Thank your local `scalaz` authors: runarorama, retronum, tmorris and lots others.
-
 ---
 
-This talk *is* about every-day situations where `scalaz` can:
+This talk *is* about **every-day situations** where `scalaz` can:
 
- * Reduce syntactical noise
- * Add type-safety with minimal "extra work"
- * Provide useful types that solve many classes of problems
+ * *Reduce* syntactical noise
+ * Provide useful types that solve *many classes* of problems
+ * *Add* type-safety with minimal "extra work"
 
 .notes: We'll talk about `scalaz` for (1) memoization, (2) domain model validation, (3) dependency injection and (4) better style.
 
@@ -237,7 +222,7 @@ More legible (and more type-safe):
 
 # Validation
 
-These shouldn't be possible:
+This isn't good:
 
     !scala
     case class SSN(
@@ -252,7 +237,7 @@ These shouldn't be possible:
 
 # Validation
 
-These shouldn't be possible:
+This shouldn't be possible:
 
     !scala
     case class Version(major: Int, minor: Int)
@@ -264,7 +249,7 @@ These shouldn't be possible:
 
 # Validation
 
-These shouldn't be possible:
+Meh:
 
     !scala
     case class Dependency(
@@ -285,34 +270,205 @@ These shouldn't be possible:
 
 # Validation
 
-TODO: JUST A LIST OF TOPICS, WILL BE DELETED
+The problem is that the types as-is aren't really accurate.  
+`String`s and `Int`s are being used too broadly.
+We really want "`Int`s greater than zero", 
+"`String`s that match a pattern", etc.
 
- * better names: Failure/Success vs. Left/Right
- * monadic without the need for left/right projection, defaults to right
- * accumulates errors via Semigroup append |+|
- * ValidationNEL[X, A] alias for Validation[NonEmptyList[X], A]
- * NonEmptyList has a Semigroup so you get error accumulation "for free"
- * multi-level case class validation
-   * companion object apply() pattern
- * Validation is Applicative so you can combine multiple Validations where failures are accumulated
-
----
-
-# Lenses
-
----
-
-# Lenses
-
-TODO: WHEN? WHY?
-
----
-
-# Lenses
+You can do the checks in the constructor:
 
     !scala
+    case class Version(major: Int, minor: Int) {
+      require(
+        major >= 0, 
+        "major must be >= 0: %s".format(major))
+      require(
+        minor >= 0, 
+        "minor must be >= 0: %s".format(minor))
+    }
+
+---
+
+# Validation
+
+But this has downsides:
+
+ * Validation failures happen as late as possible.
+ * You only get one failure, but more than one violation may be happening.
+ * You have to catch exceptions, which is just tedious.
+
+---
+
+# Validation
+
+    !scala
+    val major: Int = ...
+    val minor: Int = ...
+    val version: ??? =
+      Version.validate(major, minor)
+
+    version | Version(1, 0) // provide default
+
+    // handle failure and success
+    version.fold(
+      fail: ???        => ...,
+      success: Version => ...)
+
+---
+
+# Validation
+
+Using `scalaz`, a `Validation` can either be a `Success` or `Failure`:
+
+    !scala
+    Version.validate(1, 2)
+    // Success(Version(1, 2))
+
+    Version.validate(1, -1)
+    // Failure(NonEmptyList("digit must be >= 0"))
+
+---
+
+# Validation
+
+Model the `>= 0` constraint:
+
+    !scala
+    case class Version(
+      major: Int, // >= 0
+      minor: Int) // >= 0
+
+    object Version {
+      def validDigit(digit: Int):
+        Validation[String, Int] = (digit >= 0) ? 
+          digit.success[String] | 
+          "digit must be >= 0".fail
+        
+      ...
+    }
+
+---
+
+# Validation
+
+Combine constraints:
+
+    !scala
+    object Version {
+      def validDigit(digit: Int): 
+        Validation[String, Int] = ...
+        
+      def validate(major: Int, minor: Int) = 
+        (validDigit(major).liftFailNel |@| // huh?
+         validDigit(minor).liftFailNel) {  // huh?
+          Version(_, _)                    // huh?
+        }
+    }
+
+---
+
+# Validation
+
+`validDigit(major).liftFailNel`... wtf!?
+
+    !scala
+    validDigit(major)
+    // Validation[String, Version] 
+
+    validDigit(major).liftFailNel
+    // Validation[NonEmptyList[String], Version] 
+
+    // (already defined in scalaz)
+    type ValidationNEL[X, A] =
+      Validation[NonEmptyList[X], A]
+
+    validDigit(major).liftFailNel
+    // ValidationNEL[String, Version]
+
+---
+
+# Validation
+
+    !scala
+    val maj = validDigit(major).liftFailNel
+    val min = validDigit(minor).liftFailNel
+    // Both ValidationNEL[String, Int]
+    //                            ^^^
+
+    val mkVersion = Version(_, _)
+    // (Int, Int) => Version
+
+    val version = (maj |@| min) { mkVersion }
+    // ValidationNEL[String, Version]
+    //                       ^^^^^^^
+
+---
+
+# Validation
+
+The general form of combining `ValidationNEL`:
+
+    !scala
+    (ValidationNEL[X, A] |@|
+     ValidationNEL[X, B]) {
+      (A, B) => C
+    } // ValidationNEL[X, C]
+
+    (ValidationNEL[X, A]  |@|
+     ValidationNEL[X, B]) |@|
+     ValidationNEL[X, C]) {
+      (A, B, C) => D
+    } // ValidationNEL[X, D]
+
+    // etc.
+
+---
+
+# Validation
+
+The "rules":
+
+    !scala
+    Success |@| Success // Success
+    Success |@| Failure // Failure
+    Failure |@| Success // Failure
+    Failure |@| Failure // Failure 
+    // and accumulate fail values!
+
+    // Accumulate?
+    NonEmptyList("foo") |+| NonEmptyList("bar")
+    // NonEmptyList("foo", "bar")
+
+    // |+|? "appends" things according to rules
+
+---
+
+# Validation
+
+An improvement?
+
+ * `Validation`/`Success`/`Failure` vs. `try`/`catch` or `Either`/`Left`/`Right`.
+ * Each rule is just a function producing a `Validation`.
+ * Rules can be composed together into new validations, of differing types.
+ * Composed rules accumulate all the errors along the way.
+
+![yes](img/yes.jpg)
+
+---
+
+# Lenses
+
+---
+
+# Lenses
+
+Let's say you have some nested structure like a tree:
+
+    !scala
+    // the data
     case class Foo(name: String, factor: Int)
 
+    // a node of the tree
     case class FooNode(
       value: Foo, 
       children: Seq[FooNode] = Seq())
@@ -320,6 +476,8 @@ TODO: WHEN? WHY?
 ---
 
 # Lenses
+
+Make a tree of `Foo`'s:
 
     !scala
     val tree = 
@@ -455,6 +613,8 @@ TODO: these are just notes
   <br/>
   <code>@arosien #scalasv #scalaz</code>
 </center>
+
+Thank the `scalaz` authors: runarorama, retronum, tmorris and lots others.
 
 Credits, sources and references:
 
