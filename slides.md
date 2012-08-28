@@ -523,26 +523,25 @@ Let's try all at once:
               factor = second.value.factor * 4)))
       })
 
-Eww.
+Eww: temporary variables, `x.copy(field = f(x.field))` boilerplate, deep nesting for every level.
 
 ---
 
 # Operations on "deep" data structures
 
-The `Lens` type encapsulates "getters" and "setters" on another type.
+Wouldn't it be better to have one thing to address something in a `Foo` or `FooNode`, and just combine them?
 
     !scala
-    Lens[Thing, View](
-      get: Thing => View,
-      set: (Thing, View) => Thing)
+    val second = // second node child
+    val value  = // value of a node
+    val factor = // factor field of Foo
 
-    val thing: Thing
-    val lens:  Lens[Thing, View] = ...
-    
-    val view: View = lens(thing) // apply = get
+    val secondFactor = second ??? value ??? factor
 
-    // "set" a view
-    val thing2: Thing = lens.set(thing, view)
+    secondFactor(tree) // get 2
+
+    secondFactor.set(tree, 8)     // set 8 there
+    secondFactor.mod(tree, _ * 4) // modify there
 
 ---
 
@@ -564,6 +563,26 @@ The `Lens` type encapsulates "getters" and "setters" on another type.
       Lens(
         _.factor, 
         (foo, fac) => foo.copy(factor = fac))
+
+---
+
+# Operations on "deep" data structures
+
+The `Lens` type encapsulates "getters" and "setters" on another type.
+
+    !scala
+    Lens[Thing, View](
+      get: Thing => View,
+      set: (Thing, View) => Thing)
+
+    val thing: Thing
+    val lens:  Lens[Thing, View] = ...
+    
+    val view: View = lens(thing) // apply = get
+
+    // "set" a view
+    val thing2: Thing = lens.set(thing, view)
+
 ---
 
 # Operations on "deep" data structures
