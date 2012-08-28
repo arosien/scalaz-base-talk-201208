@@ -414,8 +414,8 @@ The general form of combining `ValidationNEL`:
       (A, B) => C
     } // ValidationNEL[X, C]
 
-    (ValidationNEL[X, A]  |@|
-     ValidationNEL[X, B]) |@|
+    (ValidationNEL[X, A] |@|
+     ValidationNEL[X, B] |@|
      ValidationNEL[X, C]) {
       (A, B, C) => D
     } // ValidationNEL[X, D]
