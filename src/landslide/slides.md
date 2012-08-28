@@ -614,10 +614,12 @@ TODO: these are just notes
   <code>@arosien #scalasv #scalaz</code>
 </center>
 
-Thank the `scalaz` authors: runarorama, retronum, tmorris and lots others.
+Thank the `scalaz` authors: runarorama, retronym, tmorris and lots others.
 
 Credits, sources and references:
 
+ * This presentation: [https://github.com/arosien/scalaz-base-talk-201208](https://github.com/arosien/scalaz-base-talk-201208)
+ * Yuvi Masory, [Scalaz, Monads, Functors and You](http://yuvimasory.com/talks)
  * [scalaz homepage](http://code.google.com/p/scalaz/), [scalaz 6.0.4 source cross-reference](http://scalaz.github.com/scalaz/scalaz-2.9.1-6.0.4/doc.sxr/index.html)
  * [jrwest/learn_you_a_scalaz](https://github.com/jrwest/learn_you_a_scalaz)
  * [debasishg/tryscalaz](https://github.com/debasishg/tryscalaz)
