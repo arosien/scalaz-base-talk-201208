@@ -15,9 +15,12 @@ site.settings
 
 LandslideSupport.settings ++ Seq(site.addMappingsToSiteDir(mappings in LandslideSupport.Landslide, ""))
 
+LandslideSupport.Destination := "index.html"
+
 ghpages.settings
 
 git.remoteRepo := "git@github.com:arosien/scalaz-base-talk-201208.git"
+
 
 initialCommands := """
 import scalaz._
