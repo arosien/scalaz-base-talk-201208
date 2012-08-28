@@ -29,8 +29,6 @@ This talk *is* about **every-day situations** where `scalaz` can:
  * Provide useful types that solve *many classes* of problems
  * *Add* type-safety with minimal "extra work"
 
-.notes: We'll talk about `scalaz` for (1) memoization, (2) domain model validation, (3) dependency injection and (4) better style.
-
 ---
 
 # Getting Started 
@@ -140,6 +138,15 @@ Many memoization strategies:
 
 .notes: Super-nerdy: the memoizing strategies are just functions of `K => V`, which means the generic `memo()` constructor has the same signature as the Y-combinator!
 
+--- 
+
+# Memoization
+
+`scalaz` memoization:
+
+ * Pros: uniform types for memoizer and function
+ * Cons: less low-level control
+
 ---
 
 # Style
@@ -216,11 +223,19 @@ More legible (and more type-safe):
 
 ---
 
-# Validation
+# Style
+
+Pros: less noise, more expressive, more type-safe
+
+Cons: you have to know these operators
 
 ---
 
-# Validation
+# Domain Validation
+
+---
+
+# Domain Validation
 
 This isn't good:
 
@@ -231,11 +246,11 @@ This isn't good:
       third4: Int)
 
     SSN(123, 123, 1234) 
-    //       ^^^ nooooo!
+    //       ^^^ noo!
 
 ---
 
-# Validation
+# Domain Validation
 
 This shouldn't be possible:
 
@@ -243,11 +258,11 @@ This shouldn't be possible:
     case class Version(major: Int, minor: Int)
 
     Version(1, -1) 
-    //         ^^ nooooo!
+    //         ^^ noooo!
 
 ---
 
-# Validation
+# Domain Validation
 
 Meh:
 
@@ -258,17 +273,17 @@ Meh:
       version: Version)
 
     Dependency("zerb", "", Version(1, 2))
-    //                 ^^ nooo!
+    //                 ^^ nooooo!
 
 ---
 
-# Validation
+# Domain Validation
 
 ![noooooo](img/no.jpg)
 
 ---
 
-# Validation
+# Domain Validation
 
 The problem is that the types as-is aren't really accurate.  
 `String`s and `Int`s are being used too broadly.
@@ -289,17 +304,17 @@ You can do the checks in the constructor:
 
 ---
 
-# Validation
+# Domain Validation
 
 But this has downsides:
 
  * Validation failures happen as late as possible.
  * You only get one failure, but more than one violation may be happening.
- * You have to catch exceptions, which is just tedious.
+ * You have to catch exceptions, which is just **tedious**.
 
 ---
 
-# Validation
+# Domain Validation
 
     !scala
     val major: Int = ...
@@ -316,7 +331,7 @@ But this has downsides:
 
 ---
 
-# Validation
+# Domain Validation
 
 Using `scalaz`, a `Validation` can either be a `Success` or `Failure`:
 
@@ -329,7 +344,7 @@ Using `scalaz`, a `Validation` can either be a `Success` or `Failure`:
 
 ---
 
-# Validation
+# Domain Validation
 
 Model the `>= 0` constraint:
 
@@ -349,7 +364,7 @@ Model the `>= 0` constraint:
 
 ---
 
-# Validation
+# Domain Validation
 
 Combine constraints:
 
@@ -367,9 +382,9 @@ Combine constraints:
 
 ---
 
-# Validation
+# Domain Validation
 
-`validDigit(major).liftFailNel`... wtf!?
+Let's break down `validDigit(major).liftFailNel`:
 
     !scala
     validDigit(major)
@@ -377,17 +392,16 @@ Combine constraints:
 
     validDigit(major).liftFailNel
     // Validation[NonEmptyList[String], Version] 
+    //   lift = do stuff inside
+    //   fail = only work on the failure side
+    //   nel  = NonEmptyList
 
-    // (already defined in scalaz)
     type ValidationNEL[X, A] =
       Validation[NonEmptyList[X], A]
 
-    validDigit(major).liftFailNel
-    // ValidationNEL[String, Version]
-
 ---
 
-# Validation
+# Domain Validation
 
     !scala
     val maj = validDigit(major).liftFailNel
@@ -404,7 +418,7 @@ Combine constraints:
 
 ---
 
-# Validation
+# Domain Validation
 
 The general form of combining `ValidationNEL`:
 
@@ -424,7 +438,7 @@ The general form of combining `ValidationNEL`:
 
 ---
 
-# Validation
+# Domain Validation
 
 The "rules":
 
@@ -443,24 +457,27 @@ The "rules":
 
 ---
 
-# Validation
+# Domain Validation
 
-An improvement?
+An improvement? 
 
- * `Validation`/`Success`/`Failure` vs. `try`/`catch` or `Either`/`Left`/`Right`.
- * Each rule is just a function producing a `Validation`.
- * Rules can be composed together into new validations, of differing types.
- * Composed rules accumulate all the errors along the way.
+ * Pro: `Validation`/`Success`/`Failure` is nicer than `try`/`catch` or `Either`/`Left`/`Right`.
+ * Pro: Each rule is just a function producing a `Validation`.
+ * Pro: Rules can be composed together into new validations, of differing types.
+ * Pro: Composed rules accumulate all the errors vs. failing fast.
+ * Con: `liftFailNel`, `|@|`, etc., is incomprehensible if you're not familiar.
+
+Overall:
 
 ![yes](img/yes.jpg)
 
 ---
 
-# Lenses
+# Operations on "deep" data structures
 
 ---
 
-# Lenses
+# Operations on "deep" data structures
 
 Let's say you have some nested structure like a tree:
 
@@ -475,7 +492,7 @@ Let's say you have some nested structure like a tree:
 
 ---
 
-# Lenses
+# Operations on "deep" data structures
 
 Make a tree of `Foo`'s:
 
@@ -491,7 +508,7 @@ Task: Create a new tree where the *second child's* `factor` is multiplied by 4.
 
 ---
 
-# Lenses
+# Operations on "deep" data structures
 
 Let's try all at once:
 
@@ -510,7 +527,9 @@ Eww.
 
 ---
 
-# Lenses
+# Operations on "deep" data structures
+
+The `Lens` type encapsulates "getters" and "setters" on another type.
 
     !scala
     Lens[Thing, View](
@@ -522,14 +541,12 @@ Eww.
     
     val view: View = lens(thing) // apply = get
 
-    // "set" a transformed View
-    val thing2: Thing = lens.mod(thing, v: View => ...)
-
-    // Lots of other operations on a Lens...
+    // "set" a view
+    val thing2: Thing = lens.set(thing, view)
 
 ---
 
-# Lenses
+# Operations on "deep" data structures
 
     !scala
     val second: Lens[FooNode, FooNode] = 
@@ -549,7 +566,7 @@ Eww.
         (foo, fac) => foo.copy(factor = fac))
 ---
 
-# Lenses
+# Operations on "deep" data structures
 
 Lenses _compose_:
 
@@ -559,7 +576,7 @@ Lenses _compose_:
 
 ---
 
-# Lenses
+# Operations on "deep" data structures
 
     !scala
     /* FooNode(
@@ -574,7 +591,7 @@ Lenses _compose_:
 
 ---
 
-# Lenses
+# Operations on "deep" data structures
 
     !scala
     /* FooNode(
@@ -594,12 +611,12 @@ Lenses _compose_:
 
 ---
 
-# Dependency Injection
+# Operations on "deep" data structures
 
-TODO: these are just notes
+`scalaz` for "deep" access:
 
- * Reader monad, really just function composition
- * Why this doesn't work without scalaz: no map/flatMap for Function1
+* Pros: composable so you can "go deeper" **for free**.
+* Cons: Need to be manually created. (But there is an experimental compiler plugin to autogenerate them for all case classes!)
 
 ---
 
@@ -614,10 +631,12 @@ TODO: these are just notes
   <code>@arosien #scalasv #scalaz</code>
 </center>
 
-Thank the `scalaz` authors: runarorama, retronum, tmorris and lots others.
+Thank the `scalaz` authors: runarorama, retronym, tmorris and lots others.
 
 Credits, sources and references:
 
+ * This presentation: [arosien/scalaz-base-talk-201208](https://github.com/arosien/scalaz-base-talk-201208)
+ * Yuvi Masory, [Scalaz, Monads, Functors and You](http://yuvimasory.com/talks)
  * [scalaz homepage](http://code.google.com/p/scalaz/), [scalaz 6.0.4 source cross-reference](http://scalaz.github.com/scalaz/scalaz-2.9.1-6.0.4/doc.sxr/index.html)
  * [jrwest/learn_you_a_scalaz](https://github.com/jrwest/learn_you_a_scalaz)
  * [debasishg/tryscalaz](https://github.com/debasishg/tryscalaz)
