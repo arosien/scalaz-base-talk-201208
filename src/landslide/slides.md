@@ -237,72 +237,49 @@ More legible (and more type-safe):
 
 # Validation
 
-The Java way, eww:
+These shouldn't be possible:
 
     !scala
-    def fetch(uri: URI): String
+    case class SSN(
+      first3: Int, 
+      second2: Int, 
+      third4: Int)
 
-    def meh(t: Throwable) = ...
-    def gotIt(s: String)  = ...
-
-    try {
-      val result = fetch(...)
-      gotIt(result)
-    } catch {
-      case e: meh(e)
-    }
+    SSN(123, 123, 1234) 
+    //       ^^^ nooooo!
 
 ---
 
 # Validation
 
-In Scala we represent the two cases in one type, `Either`:
+These shouldn't be possible:
 
     !scala
-    def fetch(uri: URI): Either[Throwable, String]
+    case class Version(major: Int, minor: Int)
 
-    def meh(t: Throwable) = ...
-    def gotIt(s: String)  = ...
-
-    val result = fetch(...) 
+    Version(1, -1) 
+    //         ^^ nooooo!
 
 ---
 
 # Validation
 
-And handle it in multiple ways. Via pattern match:
+These shouldn't be possible:
 
     !scala
-    result match {
-      case Left(l)  => 
-        // Left is a fail, right?
-        meh(l)
-      case Right(r) => 
-        // Right must be right?
-        gotIt(r)
-    }
+    case class Dependency(
+      organization: String,
+      artifactId: String,
+      version: Version)
+
+    Dependency("zerb", "", Version(1, 2))
+    //                 ^^ nooo!
 
 ---
 
 # Validation
 
-Via `fold()`:
-
-    !scala
-    result.fold(
-      l => meh(l),
-      r => gotIt(r))
-
----
-
-# Validation
-
-Via for-comprehension:
-
-    !scala
-    for {
-      
-    }
+![noooooo](img/no.jpg)
 
 ---
 
@@ -470,14 +447,6 @@ TODO: these are just notes
 
 # Thanks!
 
-Credits, sources and references:
-
- * [scalaz homepage](http://code.google.com/p/scalaz/), [scalaz 6.0.4 source cross-reference](http://scalaz.github.com/scalaz/scalaz-2.9.1-6.0.4/doc.sxr/index.html)
- * [jrwest/learn_you_a_scalaz](https://github.com/jrwest/learn_you_a_scalaz)
- * [debasishg/tryscalaz](https://github.com/debasishg/tryscalaz)
- * Runar Oli, [Dead-Simple Dependency Injection](http://lanyrd.com/2012/nescala/sqygc)
- * Tony Morris, [Dependency Injection Without the Gymnastics](http://phillyemergingtech.com/2012/system/presentations/di-without-the-gymnastics.pdf)
-
 <center>
 <big><b>scalaz "For the Rest of Us"</b></big> </br>
   </br>
@@ -486,3 +455,13 @@ Credits, sources and references:
   <br/>
   <code>@arosien #scalasv #scalaz</code>
 </center>
+
+Credits, sources and references:
+
+ * [scalaz homepage](http://code.google.com/p/scalaz/), [scalaz 6.0.4 source cross-reference](http://scalaz.github.com/scalaz/scalaz-2.9.1-6.0.4/doc.sxr/index.html)
+ * [jrwest/learn_you_a_scalaz](https://github.com/jrwest/learn_you_a_scalaz)
+ * [debasishg/tryscalaz](https://github.com/debasishg/tryscalaz)
+ * Runar Oli, [Dead-Simple Dependency Injection](http://lanyrd.com/2012/nescala/sqygc)
+ * Tony Morris, [Dependency Injection Without the Gymnastics](http://phillyemergingtech.com/2012/system/presentations/di-without-the-gymnastics.pdf)
+
+
