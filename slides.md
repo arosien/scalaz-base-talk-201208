@@ -391,10 +391,10 @@ Let's break down `validDigit(major).liftFailNel`:
     // Validation[String, Version] 
 
     validDigit(major).liftFailNel
-    // Validation[NonEmptyList[String], Version] 
     //   lift = do stuff inside
     //   fail = only work on the failure side
     //   nel  = NonEmptyList
+    // Validation[NonEmptyList[String], Version] 
 
     type ValidationNEL[X, A] =
       Validation[NonEmptyList[X], A]
