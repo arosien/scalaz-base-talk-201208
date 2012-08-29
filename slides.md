@@ -388,13 +388,13 @@ Let's break down `validDigit(major).liftFailNel`:
 
     !scala
     validDigit(major)
-    // Validation[String, Version] 
+    // Validation[String, Int] 
 
     validDigit(major).liftFailNel
     //   lift = do stuff inside
     //   fail = only work on the failure side
     //   nel  = NonEmptyList
-    // Validation[NonEmptyList[String], Version] 
+    // Validation[NonEmptyList[String], Int] 
 
     type ValidationNEL[X, A] =
       Validation[NonEmptyList[X], A]
