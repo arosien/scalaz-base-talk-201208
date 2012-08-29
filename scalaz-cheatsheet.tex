@@ -1,0 +1,165 @@
+\documentclass{tufte-handout}
+
+%\geometry{showframe}% for debugging purposes -- displays the margins
+
+\usepackage{amsmath}
+
+% Set up the images/graphics package
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+\graphicspath{{graphics/}}
+
+% The following package makes prettier tables.  We're all about the bling!
+\usepackage{booktabs}
+
+% The units package provides nice, non-stacked fractions and better spacing
+% for units.
+\usepackage{units}
+
+% The fancyvrb package lets us customize the formatting of verbatim
+% environments.  We use a slightly smaller font.
+\usepackage{fancyvrb}
+\fvset{fontsize=\normalsize}
+
+% Small sections of multiple columns
+\usepackage{multicol}
+
+% Provides paragraphs of dummy text
+\usepackage{lipsum}
+
+% These commands are used to pretty-print LaTeX commands
+\newcommand{\doccmd}[1]{\texttt{\textbackslash#1}}% command name -- adds backslash automatically
+\newcommand{\docopt}[1]{\ensuremath{\langle}\textrm{\textit{#1}}\ensuremath{\rangle}}% optional command argument
+\newcommand{\docarg}[1]{\textrm{\textit{#1}}}% (required) command argument
+\newenvironment{docspec}{\begin{quote}\noindent}{\end{quote}}% command specification environment
+\newcommand{\docenv}[1]{\textsf{#1}}% environment name
+\newcommand{\docpkg}[1]{\texttt{#1}}% package name
+\newcommand{\doccls}[1]{\texttt{#1}}% document class name
+\newcommand{\docclsopt}[1]{\texttt{#1}}% document class option name
+
+\title{scalaz "For the Rest of Us" Cheat Sheet}
+\author[Adam Rosien]{Adam Rosien}
+\date{29 August 2012}  % if the \date{} command is left out, the current date will be used
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+%\printclassoptions
+
+\section{Installation}\label{sec:installation}
+
+In your \texttt{build.sbt} file:
+
+\begin{fullwidth}
+\begin{quote}
+  \ttfamily
+   libraryDependencies += "org.scalaz" \%\% "scalaz-core" \% "6.0.4"
+\end{quote}
+\end{fullwidth}
+
+\noindent Then in your \texttt{.scala} files: 
+\sidenote{Note that this is for \texttt{scalaz} 6. The imports (and many classes!) for \texttt{scalaz} 7 are much different.}
+
+\begin{quote}
+  \ttfamily import scalaz.\_\\
+  import Scalaz.\_
+\end{quote}
+
+\section{Style}\label{sec:style}
+
+\begin{table}[ht]
+  \centering
+  \fontfamily{ppl}\selectfont
+  \begin{tabular}{rll}
+    \toprule
+    Name & Scala & \texttt{scalaz} \\
+    \midrule
+    "unix-pipey"& \texttt{g(f(a))} & \texttt{a |> f |> g}  \\
+    ternary "operator" & \texttt{if (p) "yes" else "no"} & \texttt{p ? "yes" | "no"} \\
+    \texttt{Option} constructors & \texttt{Some(42)} & \texttt{42.some} \\
+                                   & \texttt{None} & \texttt{none} \\
+    \texttt{Option.getOrElse} & \texttt{o.getOrElse("meh")} & \texttt{o | "meh"} \\
+    \texttt{Either} constructors & \texttt{Left("meh")} & \texttt{"meh".left} \\
+                                  & \texttt{Right(42)} & \texttt{42.right} \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:normaltab}
+  %\zsavepos{pos:normaltab}
+\end{table}
+
+\section{Memoization}\label{sec:memoization}
+
+\begin{table}[ht]
+  \centering
+  \fontfamily{ppl}\selectfont
+  \begin{tabular}{rl}
+    \toprule
+    Constructor & Backing store \\
+    \midrule
+    \texttt{immutableHashMapMemo[K, V]} & \texttt{HashMap} \\ 
+    \texttt{mutableHashMapMemo[K, V]} & \texttt{mutable.HashMap} \\
+    \texttt{weakHashMapMemo[K, V]} & remove+gc unused entries \\
+    \texttt{arrayMemo[V](size: Int)} & fixed size, \texttt{K = Int} \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:normaltab}
+  %\zsavepos{pos:normaltab}
+\end{table}
+
+\pagebreak
+
+\section{Validation}\label{sec:validation}
+
+\texttt{Validation} improves on \texttt{Either}: \texttt{Success/Failure} is more natural than \texttt{Left/Right}, and \texttt{Validation}s can be composed together, accumulating failures.
+
+\begin{table}[ht]
+  \centering
+  \fontfamily{ppl}\selectfont
+  \begin{tabular}{rl}
+    \toprule    
+    \texttt{Validation[X, A]} constructors & \texttt{"meh".fail} \\
+                                  & \texttt{42.success} \\
+
+    \texttt{ValidationNel[X, A]} constructors & \texttt{"meh".failNel} \\
+                                  & \texttt{42.successNel} \\
+    Lift failure type into \texttt{NonEmptyList}  & \texttt{v.liftFailNel} \\
+    \midrule
+    De-construct into \texttt{Failure} and \texttt{Success} cases & \texttt{v.fold(} \\ & \texttt{  f => ...,} \\ & \texttt{  s => ...)} \\
+    Combine \texttt{Validation}s & \texttt{(ValidationNEL[X, A] |@|} \\
+    & \texttt{ ValidationNEL[X, B]) \{} \\ 
+    & \texttt{    (A, B) => C} \\
+    & \texttt{\} // ValidationNEL[X, C]} \\
+    \bottomrule
+  \end{tabular}
+  \caption{\texttt{ValidationNel[X, A] =:= Validation[NonEmptyList[X], A]}}
+  \label{tab:normaltab}
+  %\zsavepos{pos:normaltab}
+\end{table}
+
+\section{Lens}\label{sec:lens}
+
+\texttt{Lens} give you composable "getter/setter" objects.
+
+\begin{table}[ht]
+  \centering
+  \fontfamily{ppl}\selectfont
+  \begin{tabular}{rl}
+    \toprule
+    \texttt{Lens} constructor & \texttt{Lens[A, B](get: A => B, set: (A, B) => A)} \\
+    compose & \texttt{andThen[C](that: Lens[B,C]) = Lens[A,C]} \\
+    pair & \texttt{***[C,D](that: Lens[C,D]) = Lens[(A,C),(B,D)]} \\
+    \midrule
+    get & \texttt{lens(a: A)} \\
+    set & \texttt{lens.set(a: A, b: B)} \\
+    modify & \texttt{lens.mod(a: A, f: B => B)} \\
+    \bottomrule
+  \end{tabular}
+  \label{tab:normaltab}
+  %\zsavepos{pos:normaltab}
+\end{table}
+
+\bibliography{sample-handout}
+\bibliographystyle{plainnat}
+
+\end{document}
