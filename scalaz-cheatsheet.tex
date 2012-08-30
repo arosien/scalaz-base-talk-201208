@@ -148,7 +148,7 @@ Make your code a bit nicer to read.
     & \texttt{\} // ValidationNEL[X, C]} \\
     \bottomrule
   \end{tabular}
-  \caption{\texttt{ValidationNel[X, A] =:= Validation[NonEmptyList[X], A]}}
+  \caption{\newline \noindent \texttt{ValidationNEL[X, A]} is a type alias for \texttt{Validation[NonEmptyList[X], A]}. \texttt{NonEmptyList[X]} is, well, a \texttt{List} that can't be empty.}
   \label{tab:normaltab}
   %\zsavepos{pos:normaltab}
 \end{table}
@@ -178,7 +178,7 @@ Make your code a bit nicer to read.
 \bibliography{sample-handout}
 \bibliographystyle{plainnat}
 
-\fancyfoot[C]{\copyright 2012 Adam S. Rosien (\href{mailto:adam@rosien.net}{adam@rosien.net})}
+\fancyfoot[C]{\copyright 2012 Adam S. Rosien (\href{mailto:adam@rosien.net}{\texttt{adam@rosien.net}}) \\ Source at \href{https://github.com/arosien/scalaz-base-talk-201208}{\texttt{https://github.com/arosien/scalaz-base-talk-201208}}}
 
 
 \end{document}
